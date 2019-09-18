@@ -21,8 +21,72 @@ function start() {
 
         // récupération de la saisie utilisateur
         rl.question('1. Rechercher un collègue par nom \n2. Créer un collègue\n3. Modifier l\'email\n4. Modifier la photo\n99. Sortir\n', function (saisie) {
+            
+            if (saisie == 5) {
+                rl.question('Quel nom voulez vous rechercher?', function (nomCollegue) {
+                    console.log(`Vous avez saisi : ${saisie}`);
+                    console.log(`Recherche en cours du nom ${nomCollegue}`);
+                    service.rechercheCollegueParNomNew(nomCollegue, function (callBackRechercheCollegueParNomNew) {
+                        if (callBackRechercheCollegueParNomNew.length != 0) {
+                            //console.log(callBackRechercheCollegueParNomNew);
+                            var matricule=callBackRechercheCollegueParNomNew[0];
+                            service.rechercheCollegueParMatriculeNew(matricule, function (callBackRechercheCollegueParMatriculeNew) {
+                                    console.log(callBackRechercheCollegueParMatriculeNew)
+                                    start();
+                            });
+                        } else {
+                            console.log('ce nom n\'existe pas')
+                            start();
+                        }
+                    });
+                });
+            }
 
+            if (saisie == 6) {
+                rl.question('Indiquez le nom du collegue à qui vous voulez modifier l\'email\n', function (nom) {
+                    service.rechercheCollegueParNomNew(nom, function (callBackRechercheCollegueParNomNew) {
+                        if (callBackRechercheCollegueParNomNew.length != 0) {
+                            //console.log(callBackRechercheCollegueParNomNew);
+                            var matricule=callBackRechercheCollegueParNomNew[0];
+                            service.rechercheCollegueParMatriculeNew(matricule, function (callBackRechercheCollegueParMatriculeNew) {
+                                    //console.log(callBackRechercheCollegueParMatriculeNew)
+                                    rl.question('Quel nouvel email voulez vous indiquer pour ce collegue\n', function (email) {
+                                        service.modifierEmailCollegue(matricule, email, function (callBackModifierEmailCollegue) {
+                                            console.log(callBackModifierEmailCollegue);
+                                            start();
+                                        });
+                                    });
+                            });
+                        } else {
+                            console.log('ce nom n\'existe pas')
+                            start();
+                        }
+                    });
+                });
+            }
 
+            if (saisie == 7) {
+                rl.question('Indiquez le nom du collegue à qui vous voulez modier la photo\n', function (nom) {
+                    service.rechercheCollegueParNomNew(nom, function (callBackRechercheCollegueParNomNew) {
+                        if (callBackRechercheCollegueParNomNew.length != 0) {
+                            //console.log(callBackRechercheCollegueParNomNew);
+                            var matricule=callBackRechercheCollegueParNomNew[0];
+                            service.rechercheCollegueParMatriculeNew(matricule, function (callBackRechercheCollegueParMatriculeNew) {
+                                    //console.log(callBackRechercheCollegueParMatriculeNew)
+                                    rl.question('Quel nouvel url de photo voulez vous indiquer pour ce collegue\n', function (urlPhoto) {
+                                        service.modifierPhotoCollegue(matricule, urlPhoto, function (callBackModifierPhotoCollegue) {
+                                            console.log(callBackModifierPhotoCollegue);
+                                            start();
+                                        });
+                                    });
+                            });
+                        } else {
+                            console.log('ce nom n\'existe pas')
+                            start();
+                        }
+                    });
+                });
+            }
 
 
             if (saisie == 1) {
@@ -30,17 +94,20 @@ function start() {
                     console.log(`Vous avez saisi : ${saisie}`);
                     console.log(`Recherche en cours du nom ${nomCollegue}`);
 
-                    service.rechercheCollegue(function (callBackRechercheCollegue) {
-                        callBackRechercheCollegue.forEach(collegue => {
-                            if (collegue.nom == nomCollegue) {
-                                console.log(collegue)
-                            }
-                        });
-                    }
+                    service.rechercheCollegueParNom(nomCollegue, function (callBackRechercheCollegueParNom) {
+                        
+                        if (callBackRechercheCollegueParNom.length != 0) {
+                            console.log(callBackRechercheCollegueParNom);
+                            start();
+                        } else {
+                            console.log('ce nom n\'existe pas')
+                            start();
+                        }
+                        
 
 
-                    );
-                    start();
+
+                    });
                 });
 
 
@@ -84,23 +151,29 @@ function start() {
             if (saisie == 3) {
                 rl.question('Indiquez le nom du collegue à qui vous voulez modier l\'email\n', function (nom) {
 
-                    rl.question('Quel nouvel email voulez vous indiquer pour ce collegue\n', function (email) {
+                    service.rechercheCollegueParNom(nom, function (callBackRechercheCollegueParNom) {
+                        console.log(callBackRechercheCollegueParNom);
+                        if (callBackRechercheCollegueParNom.length != 0) {
+                            rl.question('Quel nouvel email voulez vous indiquer pour ce collegue\n', function (email) {
 
-                        service.rechercheCollegueParNom(nom, function (callBackRechercheCollegueParNom) {
-                            console.log(callBackRechercheCollegueParNom);
 
-                            var matricule = callBackRechercheCollegueParNom[0].matricule;
-                            console.log('ok');
-                            console.log(matricule);
-                            console.log('ok');
-                            service.modifierEmailCollegue(matricule, email, function (callBackModifierEmailCollegue) {
-                                console.log(callBackModifierEmailCollegue);
+
+                                var matricule = callBackRechercheCollegueParNom[0].matricule;
+                                console.log('ok');
+                                console.log(matricule);
+                                console.log('ok');
+                                service.modifierEmailCollegue(matricule, email, function (callBackModifierEmailCollegue) {
+                                    console.log(callBackModifierEmailCollegue);
+                                    start();
+                                });
+
                             });
 
-                        });
-
-
-                        start();
+                        } else {
+                            console.log('ce nom n\'existe pas')
+                            start();
+                        }
+                        
 
 
 
@@ -129,11 +202,10 @@ function start() {
 
                                 var matricule = callBackRechercheCollegueParNom[0].matricule;
 
-                                console.log('ok');
-                                console.log(matricule);
-                                console.log('ok');
+
                                 service.modifierPhotoCollegue(matricule, urlPhoto, function (callBackModifierPhotoCollegue) {
                                     console.log(callBackModifierPhotoCollegue);
+                                    start();
                                 });
 
 
@@ -141,9 +213,10 @@ function start() {
 
                         } else {
                             console.log('ce nom n\'existe pas')
+                            start();
                         }
-                        start();
-
+                        
+                        
 
 
                     });
@@ -163,7 +236,7 @@ function start() {
             }
 
 
-
+           
 
 
         });

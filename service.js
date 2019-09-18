@@ -5,6 +5,28 @@
 // création d'une requête avec activation de suivi de Cookies.
 var request = require('request').defaults({ jar: true });
 
+
+
+function getListeDesCollegues() {
+
+    // la méthode retourne un objet promesse
+    return new Promise(function (resolve, reject) {
+
+            request('http://rechercherid?email='+email, {}, function(err, id) {
+                // callback(id); plus d'utilisation de callback
+
+                // gestion des erreurs
+                if(err) {
+                    reject(err); // en cas d'erreur
+                } else {
+                    resolve(id); // en cas de succès
+                }
+            });
+
+        });
+}
+
+
 function authentification(callBackAuth) {
     request('http://localhost:8081/auth',
         {
@@ -82,6 +104,36 @@ function rechercheCollegueParNom(nom,callBackRechercheCollegueParNom) {
 
 }
 
+function rechercheCollegueParNomNew(nom,callBackRechercheCollegueParNomNew) {
+
+    request('http://localhost:8081/collegues?nom_collegue=' + nom, { json: true }, function (err, res, body) {
+        if (err) { return console.log('Erreur', err); }
+
+        // body contient les données récupérées
+        //console.log('Ok', body);
+        callBackRechercheCollegueParNomNew(body)
+
+
+    });
+
+
+}
+
+function rechercheCollegueParMatriculeNew(matricule,callBackRechercheCollegueParMatriculeNew) {
+
+    request('http://localhost:8081/collegues/' + matricule, { json: true }, function (err, res, body) {
+        if (err) { return console.log('Erreur', err); }
+
+        // body contient les données récupérées
+        //console.log('Ok', body);
+        callBackRechercheCollegueParMatriculeNew(body)
+
+
+    });
+
+
+}
+
 
 function modifierEmailCollegue(matricule, nouvelEmail, callBackModifierEmailCollegue) {
     request('http://localhost:8081/collegues/'+matricule,
@@ -127,6 +179,9 @@ function modifierPhotoCollegue(matricule, urlPhoto, callBackModifierPhotoCollegu
 
 }
 
+
+module.exports.rechercheCollegueParMatriculeNew = rechercheCollegueParMatriculeNew;
+module.exports.rechercheCollegueParNomNew = rechercheCollegueParNomNew;
 module.exports.modifierPhotoCollegue = modifierPhotoCollegue;
 module.exports.modifierEmailCollegue = modifierEmailCollegue;
 module.exports.rechercheCollegueParNom = rechercheCollegueParNom;
