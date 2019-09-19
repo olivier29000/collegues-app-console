@@ -17,7 +17,9 @@ function authentif() {
         rl.question('Pour vous connecter, indiquez votre mot de passe\n', motDePasse =>
             service.authentification(nomUtilisateur, motDePasse)
                 .then(authentification => start())
-                .catch(err => console.log(err))
+                .catch(err => {
+                    console.log(`Le nom d'utilisateur et/ou le mot de passe sont incorrects. Code http de la réponse: ${err.statusCode}` )
+                    authentif()})
         )
     )
 }
